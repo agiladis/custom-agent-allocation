@@ -1,0 +1,146 @@
+{
+	"info": {
+		"_postman_id": "460e240d-6c27-40c8-8752-74b82a4536e3",
+		"name": "QISCUS - Custom Agent Alocation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13019596"
+	},
+	"item": [
+		{
+			"name": "Webhook - Custom Agent Allocation",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"app_id\": \"{{AppCode}}\",\r\n    \"source\": \"qiscus\",\r\n    \"name\": \"sudah\",\r\n    \"email\": \"sudah@gmail.com\",\r\n    \"avatar_url\": \"https:\\/\\/somewhereonlyweknow.net\\/prod\\/image\\/upload\\/wMWsDZP6ta\\/1516689726-ic_qiscus_client.png\",\r\n    \"extras\": \"{\\\"timezone_offset\\\":7}\",\r\n    \"is_resolved\": true,\r\n    \"latest_service\": {\r\n        \"id\": 244,\r\n        \"user_id\": 1,\r\n        \"room_log_id\": 53,\r\n        \"app_id\": 1,\r\n        \"room_id\": \"1905692\",\r\n        \"notes\": null,\r\n        \"resolved_at\": \"2019-02-04 04:49:47\",\r\n        \"is_resolved\": true,\r\n        \"created_at\": \"2019-02-04 04:49:47\",\r\n        \"updated_at\": \"2019-02-04 04:49:47\",\r\n        \"first_comment_id\": \"15167003\",\r\n        \"last_comment_id\": \"15167015\",\r\n        \"retrieved_at\": \"2019-02-04 04:49:47\",\r\n        \"first_comment_timestamp\": null\r\n    },\r\n    \"room_id\": \"1905692\",\r\n    \"candidate_agent\": {\r\n        \"id\": 22,\r\n        \"name\": \"dewi\",\r\n        \"email\": \"dewi@mail.com\",\r\n        \"authentication_token\": \"NlASwSIUnAqoTcFjYNBR\",\r\n        \"created_at\": \"2019-01-17 06:50:20\",\r\n        \"updated_at\": \"2019-01-18 10:12:59\",\r\n        \"sdk_email\": \"vsC6x_dewi@mail.com\",\r\n        \"sdk_key\": \"NZTGb\",\r\n        \"is_available\": true,\r\n        \"type\": 2,\r\n        \"avatar_url\": \"https:\\/\\/somewhereonlyweknow.net\\/prod\\/image\\/upload\\/D1se5xo40I\\/1516941944-Screen_Shot_2018-01-26_at_11.45.20.png\",\r\n        \"app_id\": 1,\r\n        \"is_verified\": false,\r\n        \"notifications_room_id\": \"1692312\",\r\n        \"bubble_color\": \"#666666\",\r\n        \"qismo_key\": \"43Ondc\",\r\n        \"direct_login_token\": null,\r\n        \"type_as_string\": \"agent\",\r\n        \"assigned_rules\": [\r\n            \"fb_messaging\",\r\n            \"line_messaging\",\r\n            \"qiscus_messaging\",\r\n            \"wa_messaging\",\r\n            \"telegram_messaging\"\r\n        ]\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{LocalBaseURL}}/api/v1/webhook/custom-agent-allocation",
+					"host": [
+						"{{LocalBaseURL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"webhook",
+						"custom-agent-allocation"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Assign Agent",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Qiscus-App-Id",
+						"value": "{{AppCode}}",
+						"type": "text"
+					},
+					{
+						"key": "Qiscus-Secret-Key",
+						"value": "{{SecretKey}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "room_id",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "agent_id",
+							"value": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{QiscusBaseUrl}}/api/v1/admin/service/assign_agent",
+					"host": [
+						"{{QiscusBaseUrl}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"admin",
+						"service",
+						"assign_agent"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get max load per agent",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"max_load\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{LocalBaseURL}}/api/v1/config/max-load",
+					"host": [
+						"{{LocalBaseURL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"config",
+						"max-load"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update max load per agent",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{LocalBaseURL}}/api/v1/config/max-load",
+					"host": [
+						"{{LocalBaseURL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"config",
+						"max-load"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

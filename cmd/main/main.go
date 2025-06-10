@@ -9,8 +9,10 @@ import (
 	"time"
 
 	"github.com/agiladis/custom-agent-allocation/internal/config"
+	"github.com/agiladis/custom-agent-allocation/internal/consumer"
 	v1 "github.com/agiladis/custom-agent-allocation/internal/handler/v1"
 	"github.com/agiladis/custom-agent-allocation/internal/model"
+	"github.com/agiladis/custom-agent-allocation/internal/qiscus"
 	"github.com/agiladis/custom-agent-allocation/internal/repository"
 	"github.com/agiladis/custom-agent-allocation/internal/service"
 	"github.com/gofiber/fiber/v2"
@@ -53,7 +55,7 @@ func main() {
 		log.Fatal().Err(err).Msg("failed to connect to Redis")
 	}
 
-	// init repo, service, handler
+	// init repo, service, handler, consumer
 	ctx := context.Background()
 	cfgRepo := repository.NewConfigRepository(db, rdb)
 	cfgSvc := service.NewConfigService(cfgRepo)
@@ -64,6 +66,10 @@ func main() {
 		log.Fatal().Err(err).Msg("cannot create publisher")
 	}
 	webhookHandler := v1.NewWebhookHandler(pub)
+
+	qsClient := qiscus.NewClient(cfg)
+	assignSvc := service.NewAssignService(cfg, rdb, cfgRepo, qsClient)
+	go consumer.RunConsumer(ctx, cfg, rdb, assignSvc) // start consumer in background
 
 	// Fiber and Routes
 	app := fiber.New()

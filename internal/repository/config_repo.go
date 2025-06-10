@@ -36,7 +36,7 @@ func (r *ConfigRepository) GetMaxLoad(ctx context.Context) (int, error) {
 		UpdatedAt time.Time
 	}
 	if err := r.db.WithContext(ctx).
-		Table("app_config").
+		Table("app_configs").
 		Where("key = ?", "max_load").
 		Select("key", "value", "updated_at").
 		Take(&row).Error; err != nil {
@@ -59,7 +59,7 @@ func (r *ConfigRepository) UpdateMaxLoad(ctx context.Context, newVal int) error 
 
 	// 1. Update DB
 	if err := r.db.WithContext(ctx).
-		Table("app_config").
+		Table("app_configs").
 		Where("key = ?", "max_load").
 		UpdateColumns(map[string]interface{}{
 			"value":      strVal,

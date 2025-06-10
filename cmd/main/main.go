@@ -2,12 +2,15 @@ package main
 
 import (
 	"context"
+	"errors"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/agiladis/custom-agent-allocation/internal/config"
 	v1 "github.com/agiladis/custom-agent-allocation/internal/handler/v1"
+	"github.com/agiladis/custom-agent-allocation/internal/model"
 	"github.com/agiladis/custom-agent-allocation/internal/repository"
 	"github.com/agiladis/custom-agent-allocation/internal/service"
 	"github.com/gofiber/fiber/v2"
@@ -29,16 +32,17 @@ func main() {
 	}
 
 	// connect to postgres
-	dsn := "host=" + cfg.DBHost +
-		" user=" + cfg.DBUsername +
-		" password=" + cfg.DBPassword +
-		" dbname=" + cfg.DBName +
-		" port=" + cfg.DBPort +
-		" sslmode=" + cfg.DBSSLMode
+	dsn := cfg.BuildDatabaseDSN()
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to connect to Postgres")
 	}
+
+	// auto migrate
+	if err := db.AutoMigrate(&model.AppConfig{}); err != nil {
+		log.Fatal().Err(err).Msg("failed to run auto-migrate AppConfig")
+	}
+	seedAppConfig(db)
 
 	// connect to redis
 	rdb := redis.NewClient(&redis.Options{
@@ -81,4 +85,26 @@ func main() {
 
 	log.Info().Msg("shutting down app...")
 	_ = app.Shutdown()
+}
+
+func seedAppConfig(db *gorm.DB) {
+	const (
+		configKey    = "max_load"
+		defaultValue = "2"
+	)
+
+	var c model.AppConfig
+	err := db.First(&c, "key = ?", configKey).Error
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		c = model.AppConfig{
+			Key:       configKey,
+			Value:     defaultValue,
+			UpdatedAt: time.Now(),
+		}
+		if err := db.Create(&c).Error; err != nil {
+			log.Fatal().Err(err).Msg("failed to seed max_load")
+		}
+		return
+	}
 }

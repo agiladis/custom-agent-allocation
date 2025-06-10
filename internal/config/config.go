@@ -1,6 +1,9 @@
 package config
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 )
@@ -37,4 +40,15 @@ func Load() (*Config, error) {
 	}
 
 	return &cfg, nil
+}
+
+func (c *Config) BuildDatabaseDSN() string {
+	if url := os.Getenv("DB_URL"); url != "" {
+		return url
+	}
+
+	return fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
+		c.DBHost, c.DBUsername, c.DBPassword, c.DBName, c.DBPort, c.DBSSLMode,
+	)
 }

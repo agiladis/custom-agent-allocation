@@ -81,6 +81,6 @@ go run cmd/main/main.go
 - Import assets\postman\QISCUS - Custom Agent Alocation.postman_collection.json into Postman
 - Use assets\postman\Qiscus -Custom Agent Alocation.postman_environment.json for environment variables
 - Run requests for:
-  - GET /api/v1/config
-  - PUT /api/v1/config
-  - POST /webhook/qiscus
+  - GET /api/v1/config/max-load
+  - PUT /api/v1/config/max-load
+  - POST /api/v1/webhook/custom-agent-allocation

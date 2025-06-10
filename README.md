@@ -4,7 +4,7 @@ Sistem ini digunakan untuk mengatur _auto-assignment_ customer ke agent yang akt
 
 ---
 
-## 🧠 Fitur Utama
+## Fitur Utama
 
 - Mendengarkan webhook Qiscus dan mengantri customer ke Redis Stream
 - Memproses customer berdasarkan prinsip **FIFO**

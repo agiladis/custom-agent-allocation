@@ -9,7 +9,7 @@ import (
 )
 
 type Publisher interface {
-	Publish(RoomID string) error
+	Publish(ctx context.Context, RoomID string) error
 }
 
 type redisPublisher struct {
@@ -18,13 +18,8 @@ type redisPublisher struct {
 	groupName  string
 }
 
-func NewPublisher(rdb *redis.Client, cfg *config.Config) (Publisher, error) {
-	err := rdb.XGroupCreateMkStream(
-		context.Background(),
-		cfg.RedisStream,
-		cfg.RedisGroup,
-		"0",
-	).Err()
+func NewPublisher(ctx context.Context, rdb *redis.Client, cfg *config.Config) (Publisher, error) {
+	err := rdb.XGroupCreateMkStream(ctx, cfg.RedisStream, cfg.RedisGroup, "0").Err()
 	if err != nil && !isGroupExistsErr(err) {
 		return nil, fmt.Errorf("failed to create consumer group: %w", err)
 	}
@@ -36,14 +31,15 @@ func NewPublisher(rdb *redis.Client, cfg *config.Config) (Publisher, error) {
 	}, nil
 }
 
-func (p *redisPublisher) Publish(roomID string) error {
-	_, err := p.rdb.XAdd(
-		context.Background(),
-		&redis.XAddArgs{
-			Stream: p.streamName,
-			Values: map[string]interface{}{"room_id": roomID},
-		},
-	).Result()
+func (p *redisPublisher) Publish(ctx context.Context, roomID string) error {
+	if roomID == "" {
+		return fmt.Errorf("roomID cannot be empty")
+	}
+
+	_, err := p.rdb.XAdd(ctx, &redis.XAddArgs{
+		Stream: p.streamName,
+		Values: map[string]interface{}{"room_id": roomID},
+	}).Result()
 
 	return err
 }

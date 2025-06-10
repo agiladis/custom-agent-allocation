@@ -50,7 +50,8 @@ func main() {
 	app := fiber.New()
 
 	// init repo, service, handler
-	publisher, err := service.NewPublisher(rdb, cfg)
+	ctx := context.Background()
+	publisher, err := service.NewPublisher(ctx, rdb, cfg)
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot create publisher")
 	}

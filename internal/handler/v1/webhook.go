@@ -31,7 +31,7 @@ func (h *WebhookHandler) Receive(c *fiber.Ctx) error {
 		})
 	}
 
-	if err := h.publisher.Publish(payload.RoomID); err != nil {
+	if err := h.publisher.Publish(c.Context(), payload.RoomID); err != nil {
 		log.Error().Err(err).Msg("failed to publish room_id to Redis")
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "could not enqueue job",
